@@ -2,10 +2,7 @@ package activemqartemis
 
 import (
 	"context"
-	"github.com/rh-messaging/activemq-artemis-operator/pkg/utils/selectors"
 	"k8s.io/apimachinery/pkg/api/errors"
-	"k8s.io/apimachinery/pkg/labels"
-	"reflect"
 
 	//"sigs.k8s.io/controller-runtime/pkg/controller/controllerutil"
 
@@ -183,90 +180,6 @@ func (r *ReconcileActiveMQArtemis) Reconcile(request reconcile.Request) (reconci
 		return reconcile.Result{Requeue: true}, nil
 	}
 
-	podList := &corev1.PodList{}
-	labelSelector := labels.SelectorFromSet(selectors.LabelsForActiveMQArtemis(instance.Name))
-	listOps := &client.ListOptions{Namespace: instance.Namespace, LabelSelector: labelSelector}
-	err = r.client.List(context.TODO(), listOps, podList)
-	if err != nil {
-		reqLogger.Error(err, "Failed to list pods")
-		return reconcile.Result{}, err
-	}
-	podNames := getPodNames(podList.Items)
-
-	// Update status.PodNames if needed
-	if !reflect.DeepEqual(podNames, instance.Status) {
-
-		instance.Status.PodNames = getPodNamesObj(podList.Items)
-
-		err := r.client.Status().Update(context.TODO(), instance)
-		if err != nil {
-			reqLogger.Error(err, "Failed to update pod names")
-			return reconcile.Result{}, err
-		}
-		reqLogger.Info("Pod names updated")
-		return reconcile.Result{Requeue: true}, nil
-	}
-
 	// Single exit, return the result and error condition
 	return reconcileResult, err
-
-}
-
-func getPodNamesObj(pods []corev1.Pod) brokerv1alpha1.AMQPodNames {
-	var ready, unavailable, names []string
-	ready = append(ready, "---")
-	unavailable = append(unavailable, "---")
-
-	return brokerv1alpha1.AMQPodNames{
-		PodName:     names,
-		Ready:       ready,
-		Unavailable: unavailable,
-	}
-}
-
-func getPodDeploymentStatus(r *ReconcileActiveMQArtemis, instance *brokerv1alpha1.ActiveMQArtemis) brokerv1alpha1.AMQPodNames {
-	// List the pods for this deployment
-	log.Info("making", " method", " call")
-
-	var ready, unavailable, names []string
-	var startCnt int32 = 0
-	var readyCnt int32 = 0
-
-	depFound := &appsv1.StatefulSet{}
-	err := r.client.Get(context.TODO(), types.NamespacedName{Name: instance.Name, Namespace: instance.Namespace}, depFound)
-	if err == nil {
-		log.Info("----------------dont know", "dep: ", depFound.Status.ReadyReplicas, "dep 2", depFound.Status.Replicas)
-		readyCnt = depFound.Status.ReadyReplicas
-		startCnt = depFound.Status.Replicas - readyCnt
-	} else {
-		dsFound := &appsv1.DaemonSet{}
-		err = r.client.Get(context.TODO(), types.NamespacedName{Name: instance.Name, Namespace: instance.Namespace}, dsFound)
-		if err == nil {
-			log.Info("daemonset exist:", " replias: ", dsFound.Status.NumberReady, " - ", dsFound.Status.NumberAvailable)
-			readyCnt = dsFound.Status.NumberReady
-			startCnt = dsFound.Status.NumberAvailable - readyCnt
-		}
-	}
-	for i := int32(0); i < startCnt; {
-		unavailable = append(unavailable, "pod")
-		i++
-	}
-	for i := int32(0); i < readyCnt; {
-		ready = append(ready, "pod")
-		i++
-	}
-	return brokerv1alpha1.AMQPodNames{
-		PodName:     names,
-		Ready:       ready,
-		Unavailable: unavailable,
-	}
-}
-func getPodNames(pods []corev1.Pod) []string {
-	var podNames []string
-	for _, pod := range pods {
-		if pod.GetObjectMeta().GetDeletionTimestamp() == nil {
-			podNames = append(podNames, pod.Name)
-		}
-	}
-	return podNames
 }

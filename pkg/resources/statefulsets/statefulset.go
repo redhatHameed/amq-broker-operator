@@ -77,7 +77,7 @@ var log = logf.Log.WithName("package statefulsets")
 //}
 
 const (
-	graceTime        = 30
+	graceTime       = 30
 	TCPLivenessPort = 8161
 )
 
