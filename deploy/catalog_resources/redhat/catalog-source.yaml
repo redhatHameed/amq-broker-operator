@@ -110,15 +110,23 @@ items:
                   resources:
                     - kind: Service
                       version: v1
-                    - kind: Deployment
+                    - kind: StatefulSet
                       version: v1
                   specDescriptors:
-                    - description: The desired number of member pods for ActiveMQArtemis mesh
+                    - description: The desired number of member pods for ActiveMQArtemis
                       displayName: Size
                       path: size
+                      x-descriptors:
+                        - 'urn:alm:descriptor:com.tectonic.ui:podCount'
                     - description: The Image
                       displayName: Image
                       path: image
+                  statusDescriptors:
+                    - description: The current pods
+                      displayName: Pods
+                      path: pods
+                      x-descriptors:
+                        - 'urn:alm:descriptor:com.tectonic.ui:podStatuses'
                 - name: activemqartemisaddresses.broker.amq.io
                   version: v1alpha1
                   kind: ActiveMQArtemisAddress
@@ -137,8 +145,6 @@ items:
                     - description: The Routing Type
                       displayName: Routing Type
                       path: routingType
-          
-          
             install:
               strategy: deployment
               spec:
@@ -331,6 +337,14 @@ items:
                     type: object
                   status:
                     type: object
+                    properties:
+                      revNumber:
+                        type: string
+                      pods:
+                        items:
+                          type: object
+                        type: object
+          
             version: v1alpha1
             versions:
             - name: v1alpha1

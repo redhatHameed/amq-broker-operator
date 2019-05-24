@@ -31,9 +31,7 @@ type CommonConfig struct {
 // ActiveMQArtemisStatus defines the observed state of ActiveMQArtemis
 // +k8s:openapi-gen=true
 type ActiveMQArtemisStatus struct {
-	// INSERT ADDITIONAL STATUS FIELD - define observed state of cluster
-	// Important: Run "operator-sdk generate k8s" to regenerate code after modifying this file
-	// Add custom validation using kubebuilder tags: https://book.kubebuilder.io/beyond_basics/generating_crd.html
+	PodNames AMQPodNames `json:"pods"`
 }
 
 type SSLConfig struct {
@@ -72,4 +70,10 @@ type ActiveMQArtemisList struct {
 
 func init() {
 	SchemeBuilder.Register(&ActiveMQArtemis{}, &ActiveMQArtemisList{})
+}
+
+type AMQPodNames struct {
+	PodName     []string `json:"podName,omitempty"`
+	Ready       []string `json:"ready,omitempty"`
+	Unavailable []string `json:"unavailable,omitempty"`
 }
