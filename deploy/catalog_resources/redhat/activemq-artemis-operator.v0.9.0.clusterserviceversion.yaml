@@ -134,6 +134,10 @@ spec:
           - description: The number of broker pods to deploy
             displayName: Size
             path: size
+            x-descriptors:
+              - 'urn:alm:descriptor:com.tectonic.ui:podCount'
+                statusDescriptors:
+              - description: The current pods
           - description: The image used for the broker deployment
             displayName: Image
             path: image
@@ -149,6 +153,12 @@ spec:
           - description: If true migrate messages on scaledown
             displayName: MessageMigration
             path: messageMigration
+        statusDescriptors:
+          - description: The current pods
+            displayName: Pods Status
+            path: pods
+            x-descriptors:
+              - "urn:alm:descriptor:com.tectonic.ui:podStatuses"
       - name: activemqartemisaddresses.broker.amq.io
         version: v2alpha1
         kind: ActiveMQArtemisAddress
