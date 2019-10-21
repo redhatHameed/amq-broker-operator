@@ -26,14 +26,15 @@
   revision = "de5bf2ad457846296e2031421a34e2568e304e35"
 
 [[projects]]
-  digest = "1:b0c94aea1797e0a93e644ee6a6937bb2402e2ab418154ece436cee737eec1c2d"
+  digest = "1:89ac0de6a32b92b7ce40655c76cbaa4a0af5235a7802d36441853597534b67ac"
   name = "github.com/RHsyseng/operator-utils"
   packages = [
     "pkg/olm",
+    "pkg/resource",
     "pkg/validation",
   ]
   pruneopts = "NT"
-  revision = "232650febd728455482b3c780c79a9ac0be62b50"
+  revision = "24b5b6380a3fcd3b71fb8338257ea2f6e7c50538"
 
 [[projects]]
   digest = "1:680b63a131506e668818d630d3ca36123ff290afa0afc9f4be21940adca3f27d"
@@ -397,6 +398,10 @@
   name = "github.com/openshift/api"
   packages = [
     "apps/v1",
+    "build/v1",
+    "image/docker10",
+    "image/dockerpre012",
+    "image/v1",
     "route/v1",
   ]
   pruneopts = "NT"
@@ -1106,9 +1111,14 @@
   analyzer-version = 1
   input-imports = [
     "github.com/RHsyseng/operator-utils/pkg/olm",
+    "github.com/RHsyseng/operator-utils/pkg/resource",
     "github.com/RHsyseng/operator-utils/pkg/validation",
     "github.com/ghodss/yaml",
+    "github.com/go-logr/logr",
     "github.com/go-openapi/spec",
+    "github.com/openshift/api/apps/v1",
+    "github.com/openshift/api/build/v1",
+    "github.com/openshift/api/image/v1",
     "github.com/openshift/api/route/v1",
     "github.com/operator-framework/operator-sdk/pkg/k8sutil",
     "github.com/operator-framework/operator-sdk/pkg/leader",
@@ -1118,9 +1128,12 @@
     "github.com/roddiekieley/activemq-artemis-management",
     "github.com/spf13/pflag",
     "github.com/stretchr/testify/assert",
+    "go.uber.org/zap",
+    "go.uber.org/zap/zapcore",
     "k8s.io/api/apps/v1",
     "k8s.io/api/core/v1",
     "k8s.io/api/extensions/v1beta1",
+    "k8s.io/api/rbac/v1",
     "k8s.io/apimachinery/pkg/api/errors",
     "k8s.io/apimachinery/pkg/api/resource",
     "k8s.io/apimachinery/pkg/apis/meta/v1",
